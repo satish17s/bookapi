@@ -88,26 +88,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "gutenberg_api.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-# # Determine if we're on Railway
-# IS_RAILWAY = os.getenv('RAILWAY_ENVIRONMENT') is not None
-
-# # Debug setting
-# DEBUG = not IS_RAILWAY  # True locally, False on Railway
-
-# # Hosts settings
-# if IS_RAILWAY:
-#     ALLOWED_HOSTS = ['.railway.app']
-#     CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
-# else:
-#     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
-#     CSRF_TRUSTED_ORIGINS = []
-
-
-# Near the top of the file, after imports
-
 # Single definition of IS_RAILWAY
 IS_RAILWAY = os.getenv('RAILWAY_ENVIRONMENT') == 'production'
 
