@@ -136,7 +136,7 @@ if IS_RAILWAY:
     DEBUG = False
     ALLOWED_HOSTS = ['.railway.app']
     CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
-    CORS_ALLOWED_ORIGINS = ['https://your-frontend-domain.com']
+    CORS_ALLOWED_ORIGINS = ['*']
     
     # Security settings
     SECURE_SSL_REDIRECT = True
@@ -148,7 +148,7 @@ if IS_RAILWAY:
 else:
     # Local development settings
     DEBUG = True
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = ['*']
     CSRF_TRUSTED_ORIGINS = []
     CORS_ALLOWED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
     
@@ -156,6 +156,9 @@ else:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_PRELOAD = False
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 
 
 # Password validation
