@@ -1,1 +1,1 @@
-web: cd gutenberg_api && gunicorn gutenberg_api.gutenberg_api.wsgi:application --bind 0.0.0.0:$PORT
+web: cd gutenberg_api && gunicorn gutenberg_api.wsgi:application --bind 0.0.0.0:$PORT
