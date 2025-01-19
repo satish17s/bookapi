@@ -29,7 +29,6 @@
                             <option value="fr" {% if request.GET.language == 'fr' %}selected{% endif %}>French</option>
                             <option value="de" {% if request.GET.language == 'de' %}selected{% endif %}>German</option>
                             <option value="es" {% if request.GET.language == 'es' %}selected{% endif %}>Spanish</option>
-                            <!-- Add more languages as needed -->
                         </select>
                     </div>
 
@@ -40,33 +39,11 @@
                                placeholder="Search in subjects and bookshelves" value="{{ request.GET.topic|default:'' }}">
                     </div>
 
-                    <!-- MIME Type Selection -->
-                    <div class="col-md-4">
-                        <label for="mime_type" class="form-label">Format Type</label>
-                        <select class="form-select" id="mime_type" name="mime_type">
-                            <option value="">All Formats</option>
-                            <option value="text/plain" {% if request.GET.mime_type == 'text/plain' %}selected{% endif %}>Text</option>
-                            <option value="text/html" {% if request.GET.mime_type == 'text/html' %}selected{% endif %}>HTML</option>
-                            <option value="application/pdf" {% if request.GET.mime_type == 'application/pdf' %}selected{% endif %}>PDF</option>
-                            <option value="application/epub+zip" {% if request.GET.mime_type == 'application/epub+zip' %}selected{% endif %}>EPUB</option>
-                        </select>
-                    </div>
-
                     <!-- Book IDs -->
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label for="book_ids" class="form-label">Book IDs (comma-separated)</label>
                         <input type="text" class="form-control" id="book_ids" name="book_ids" 
                                placeholder="e.g., 1,2,3" value="{{ request.GET.book_ids|default:'' }}">
-                    </div>
-
-                    <!-- Sort Options -->
-                    <div class="col-md-6">
-                        <label for="sort" class="form-label">Sort By</label>
-                        <select class="form-select" id="sort" name="sort">
-                            <option value="-download_count" {% if request.GET.sort == '-download_count' %}selected{% endif %}>Most Popular</option>
-                            <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>Title (A-Z)</option>
-                            <option value="-title" {% if request.GET.sort == '-title' %}selected{% endif %}>Title (Z-A)</option>
-                        </select>
                     </div>
 
                     <!-- Search Buttons -->
@@ -136,12 +113,12 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-primary dropdown-toggle" 
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                            Download
+                            Download ({{ book.download_count }})
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             {% for format in book.formats.all %}
                             <li>
-                                <a class="dropdown-item" href="{{ format.url }}" target="_blank">
+                                <a class="dropdown-item" href="{% url 'download_book' book.id format.id %}"  target="_blank">
                                     {{ format.mime_type }}
                                 </a>
                             </li>
