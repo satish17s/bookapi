@@ -1,0 +1,12 @@
+{
+    "build": {
+        "builder": "NIXPACKS",
+        "buildCommand": "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    },
+    "deploy": {
+        "startCommand": "gunicorn gutenberg_api.wsgi:application",
+        "healthcheckPath": "/api/books/",
+        "healthcheckTimeout": 100,
+        "restartPolicyType": "ON_FAILURE"
+    }
+}
