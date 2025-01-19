@@ -106,16 +106,43 @@ WSGI_APPLICATION = "gutenberg_api.wsgi.application"
 #     CSRF_TRUSTED_ORIGINS = []
 
 
-IS_RAILWAY = os.getenv('RAILWAY_ENVIRONMENT') is not None
+# Near the top of the file, after imports
 
-# Database configuration
+# Single definition of IS_RAILWAY
+IS_RAILWAY = os.getenv('RAILWAY_ENVIRONMENT') == 'production'
+
+# Environment-specific settings
 if IS_RAILWAY:
-    # Railway PostgreSQL database
+    # Railway (Production) settings
+    DEBUG = False
+    ALLOWED_HOSTS = ['*', '.railway.app']  
+    CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
+    CORS_ALLOWED_ORIGINS = ['https://*.railway.app']
+    
+    # Database for Railway
     DATABASES = {
-        'default': dj_database_url.config()
+        'default': dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
+    
+    # Security settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 else:
-    # Local database
+    # Local development settings
+    DEBUG = True
+    ALLOWED_HOSTS = ['*']
+    CSRF_TRUSTED_ORIGINS = []
+    CORS_ALLOWED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+    
+    # Database for local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -126,33 +153,8 @@ else:
             'PORT': os.getenv('DB_PORT', '5432'),
         }
     }
-
-# Determine if we're on Railway
-IS_RAILWAY = os.getenv('RAILWAY_ENVIRONMENT') is not None
-
-# Environment settings
-if IS_RAILWAY:
-    # Railway (Production) settings
-    DEBUG = False
-    ALLOWED_HOSTS = ['.railway.app']
-    CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
-    CORS_ALLOWED_ORIGINS = ['*']
     
-    # Security settings
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-else:
-    # Local development settings
-    DEBUG = True
-    ALLOWED_HOSTS = ['*']
-    CSRF_TRUSTED_ORIGINS = []
-    CORS_ALLOWED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
-    
-    # Disable security redirects locally
+    # Disable security settings locally
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
