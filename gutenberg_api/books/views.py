@@ -8,11 +8,6 @@ from django_filters import rest_framework as filters
 from .models import Book, Format
 from .serializers import BookSerializer
 
-from django.http import HttpResponse
-
-def home(request):
-    return HttpResponse("Hello, World!")
-
 class CustomPagination(PageNumberPagination):
     """
     Custom pagination class for the API.
@@ -192,73 +187,73 @@ def download_book(request, book_id, format_id):
     # Redirect to download URL
     return HttpResponseRedirect(book_format.url)
 
-# def home(request):
-#     """
-#     Home page view showing book list with filters.
+def home(request):
+    """
+    Home page view showing book list with filters.
     
-#     Args:
-#         request: HTTP request containing filter parameters
+    Args:
+        request: HTTP request containing filter parameters
         
-#     Returns:
-#         Rendered home page with filtered book list
-#     """
-#     # Get base queryset with optimized queries
-#     queryset = Book.objects.all().prefetch_related(
-#         'authors', 'languages', 'subjects', 'bookshelves', 'formats'
-#     )
+    Returns:
+        Rendered home page with filtered book list
+    """
+    # Get base queryset with optimized queries
+    queryset = Book.objects.all().prefetch_related(
+        'authors', 'languages', 'subjects', 'bookshelves', 'formats'
+    )
     
-#     # Get filter parameters from request
-#     title = request.GET.get('title')
-#     author = request.GET.get('author')
-#     topic = request.GET.get('topic')
-#     language = request.GET.get('language')
-#     mime_type = request.GET.get('mime_type')
-#     book_ids = request.GET.get('book_ids')
-#     sort = request.GET.get('sort', '-download_count')
+    # Get filter parameters from request
+    title = request.GET.get('title')
+    author = request.GET.get('author')
+    topic = request.GET.get('topic')
+    language = request.GET.get('language')
+    mime_type = request.GET.get('mime_type')
+    book_ids = request.GET.get('book_ids')
+    sort = request.GET.get('sort', '-download_count')
     
-#     # Apply filters if parameters are present
-#     if title:
-#         queryset = queryset.filter(title__icontains=title)
-#     if author:
-#         queryset = queryset.filter(authors__name__icontains=author)
-#     if topic:
-#         queryset = queryset.filter(
-#             Q(subjects__name__icontains=topic) | 
-#             Q(bookshelves__name__icontains=topic)
-#         ).distinct()
-#     if language:
-#         queryset = queryset.filter(languages__code=language)
-#     if mime_type:
-#         queryset = queryset.filter(formats__mime_type=mime_type)
-#     if book_ids:
-#         try:
-#             ids = [int(x.strip()) for x in book_ids.split(',')]
-#             queryset = queryset.filter(gutenberg_id__in=ids)
-#         except ValueError:
-#             pass
+    # Apply filters if parameters are present
+    if title:
+        queryset = queryset.filter(title__icontains=title)
+    if author:
+        queryset = queryset.filter(authors__name__icontains=author)
+    if topic:
+        queryset = queryset.filter(
+            Q(subjects__name__icontains=topic) | 
+            Q(bookshelves__name__icontains=topic)
+        ).distinct()
+    if language:
+        queryset = queryset.filter(languages__code=language)
+    if mime_type:
+        queryset = queryset.filter(formats__mime_type=mime_type)
+    if book_ids:
+        try:
+            ids = [int(x.strip()) for x in book_ids.split(',')]
+            queryset = queryset.filter(gutenberg_id__in=ids)
+        except ValueError:
+            pass
     
-#     # Apply sorting
-#     queryset = queryset.order_by(sort)
+    # Apply sorting
+    queryset = queryset.order_by(sort)
     
-#     # Set up pagination
-#     paginator = Paginator(queryset.distinct(), 25)
-#     page_number = request.GET.get('page')
-#     books = paginator.get_page(page_number)
+    # Set up pagination
+    paginator = Paginator(queryset.distinct(), 25)
+    page_number = request.GET.get('page')
+    books = paginator.get_page(page_number)
     
-#     # Get total count for display
-#     total_count = queryset.count()
+    # Get total count for display
+    total_count = queryset.count()
     
-#     # Render template with context
-#     return render(request, 'books/home.html', {
-#         'books': books,
-#         'total_count': total_count,
-#         'filters': {
-#             'title': title,
-#             'author': author,
-#             'topic': topic,
-#             'language': language,
-#             'mime_type': mime_type,
-#             'book_ids': book_ids,
-#             'sort': sort,
-#         }
-#     })
+    # Render template with context
+    return render(request, 'books/home.html', {
+        'books': books,
+        'total_count': total_count,
+        'filters': {
+            'title': title,
+            'author': author,
+            'topic': topic,
+            'language': language,
+            'mime_type': mime_type,
+            'book_ids': book_ids,
+            'sort': sort,
+        }
+    })
