@@ -5,6 +5,8 @@
     "deploy": {
         "startCommand": "cd gutenberg_api && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn gutenberg_api.wsgi",
         "restartPolicyType": "ON_FAILURE",
-        "restartPolicyMaxRetries": 10
+        "restartPolicyMaxRetries": 10,
+        "healthcheckPath": "/api/books/",
+        "healthcheckTimeout": 100
     }
 }

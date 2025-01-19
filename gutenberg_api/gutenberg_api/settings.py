@@ -30,12 +30,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-remg5$azdu9==9#1gmihp@rzft^j*1-dewbo&+-=y#)c^zjpfy')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+# DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 # ALLOWED_HOSTS = []
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.railway.app').split(',')
+# ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+# CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.railway.app').split(',')
 
 # Application definition
 
@@ -91,28 +91,71 @@ WSGI_APPLICATION = "gutenberg_api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# # Determine if we're on Railway
+# IS_RAILWAY = os.getenv('RAILWAY_ENVIRONMENT') is not None
+
+# # Debug setting
+# DEBUG = not IS_RAILWAY  # True locally, False on Railway
+
+# # Hosts settings
+# if IS_RAILWAY:
+#     ALLOWED_HOSTS = ['.railway.app']
+#     CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
+# else:
+#     ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+#     CSRF_TRUSTED_ORIGINS = []
+
+
+IS_RAILWAY = os.getenv('RAILWAY_ENVIRONMENT') is not None
+
 # Database configuration
-if os.getenv('DATABASE_URL'):
-    # Production (Railway) database
+if IS_RAILWAY:
+    # Railway PostgreSQL database
     DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+        'default': dj_database_url.config()
     }
 else:
-    # Local development database
+    # Local database
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'gutenberg',
-            'USER': 'gutenberg',
-            'PASSWORD': 'gutenberg',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
+            'NAME': os.getenv('DB_NAME', 'gutenberg'),
+            'USER': os.getenv('DB_USER', 'gutenberg'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'gutenberg'),
+            'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+            'PORT': os.getenv('DB_PORT', '5432'),
         }
     }
+
+# Determine if we're on Railway
+IS_RAILWAY = os.getenv('RAILWAY_ENVIRONMENT') is not None
+
+# Environment settings
+if IS_RAILWAY:
+    # Railway (Production) settings
+    DEBUG = False
+    ALLOWED_HOSTS = ['.railway.app']
+    CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
+    CORS_ALLOWED_ORIGINS = ['https://your-frontend-domain.com']
+    
+    # Security settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+else:
+    # Local development settings
+    DEBUG = True
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    CSRF_TRUSTED_ORIGINS = []
+    CORS_ALLOWED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+    
+    # Disable security redirects locally
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 
 # Password validation
@@ -163,17 +206,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Security settings
-if not DEBUG:
-    # HTTPS settings
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
-
-    # HSTS settings
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
-    SECURE_HSTS_PRELOAD = True
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 # Rest Framework settings
 REST_FRAMEWORK = {
