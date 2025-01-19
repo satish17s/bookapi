@@ -40,11 +40,11 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
-    path('api/', include(router.urls)),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), 
-         name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), 
-         name='schema-redoc'),
-     path('download/<int:book_id>/<int:format_id>/', download_book, name='download_book'),
+    # path('api/', include(router.urls)),
+    # path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), 
+    #      name='schema-swagger-ui'),
+    # path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), 
+    #      name='schema-redoc'),
+    #  path('download/<int:book_id>/<int:format_id>/', download_book, name='download_book'),
 ]
 
