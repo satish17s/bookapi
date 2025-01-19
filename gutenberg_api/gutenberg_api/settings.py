@@ -93,12 +93,12 @@ WSGI_APPLICATION = "gutenberg_api.wsgi.application"
 
 # Database configuration
 if os.getenv('DATABASE_URL'):
-    # Production database (Railway)
+    # Production (Railway) database
     DATABASES = {
         'default': dj_database_url.config(
             default=os.getenv('DATABASE_URL'),
             conn_max_age=600,
-            conn_health_checks=True,  # Add health checks
+            conn_health_checks=True,
         )
     }
 else:
@@ -106,14 +106,13 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME', 'gutenberg'),
-            'USER': os.getenv('DB_USER', 'gutenberg'),
-            'PASSWORD': os.getenv('DB_PASSWORD', 'gutenberg'),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '5432'),
+            'NAME': 'gutenberg',
+            'USER': 'gutenberg',
+            'PASSWORD': 'gutenberg',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
         }
     }
-
 
 
 # Password validation
